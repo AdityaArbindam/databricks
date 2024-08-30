@@ -1,0 +1,40 @@
+
+USING SAS TOKEN ACCESS by first creating a role into the storage account
+
+------------------------------------------------------------------------------------------
+# Define the storage account name and container name
+storage_account_name = "<your-storage-account-name>"
+container_name = "<your-container-name>"
+
+# SAS token (without the '?')
+sas_token = "<your-sas-token>"
+
+# Mount the storage container
+dbutils.fs.mount(
+  source = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net",
+  mount_point = f"/mnt/{container_name}",
+  extra_configs = {f"fs.azure.sas.{container_name}.{storage_account_name}.blob.core.windows.net": sas_token}
+)
+--------------------------------------------------------------------------------------------
+******THE CODE I USED TO MOUNT MY DATABRICKS:******
+
+storage_account_name = "adlsforjob"
+container_name = "bronze"
+
+# SAS token (without the '?')
+sas_token = "sp=racwdlm&st=2024-07-08T12:53:40Z&se=2024-07-08T20:53:40Z&spr=https&sv=2022-11-02&sr=c&sig=7kcSUlnUrOoXZlGukWRO6323oITYqiLFClYLNvFgRq8%3D"
+
+# Mount the storage container
+dbutils.fs.mount(
+  source = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net",
+  mount_point = f"/mnt/{container_name}",
+  extra_configs = {f"fs.azure.sas.{container_name}.{storage_account_name}.blob.core.windows.net": sas_token}
+)
+----------------------------------------------------------------------------------------------
+# List the files in the mounted container
+display(dbutils.fs.ls(f"/mnt/{container_name}"))
+----------------------------------------------------------------------------------------------
+# to unmount the storage
+
+dbutils.fs.unmount("/mnt/bronze") 
+----------------------------------------------------------------------------------------------
